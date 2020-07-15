@@ -1,4 +1,3 @@
-import * as alt from "alt-server";
 import threads from "worker_threads";
 import uuid from "uuid";
 

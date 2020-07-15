@@ -1,12 +1,12 @@
 import threads from "worker_threads";
 
-export default class WorkerThreads {
+export default class WorkerHelper {
     /**
      * All existing events
      *
      * @type {Array<Event>}
      * @static
-     * @memberof WorkerThreads
+     * @memberof WorkerHelper
      */
     static _events = [];
 
@@ -15,7 +15,7 @@ export default class WorkerThreads {
         const id = request.id;
         const data = request.data;
 
-        let event = WorkerThreads._events.find((ev) => ev.name === event_name);
+        let event = WorkerHelper._events.find((ev) => ev.name === event_name);
         if(!event) return;
         let result = await event.handler(data);
         threads.parentPort.postMessage({ id, event: event_name, data: result });
@@ -27,10 +27,10 @@ export default class WorkerThreads {
      * @static
      * @param {String} event
      * @param {(data: {}) => Promise<*>} handler
-     * @memberof WorkerThreads
+     * @memberof WorkerHelper
      */
     static on(event, handler) {
-        WorkerThreads._events.push(new Event(event, handler));
+        WorkerHelper._events.push(new Event(event, handler));
     }
 }
 
@@ -54,4 +54,4 @@ class Event {
     }
 }
 
-threads.parentPort.on("message", WorkerThreads._receiveMessage);
+threads.parentPort.on("message", WorkerHelper._receiveMessage);
