@@ -18,7 +18,7 @@ export default class WorkerHelper {
         let event = WorkerHelper._events[event_name];
         if(!event) return;
         let result = await event.handler(data);
-        threads.parentPort.postMessage({ id, event: event_name, data: result });
+        threads.parentPort.postMessage({ id, data: result });
     }
     /**
      * Creates a new event listener

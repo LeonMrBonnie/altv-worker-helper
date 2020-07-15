@@ -23,6 +23,7 @@ export default class Worker {
         try {
             this._name = name;
             this._worker = new threads.Worker(path);
+            this._messages = {};
             Worker._workers.push(this);
             this._worker.on("exit", (code) => {
                 if (Worker._stopping) return;
@@ -30,11 +31,13 @@ export default class Worker {
                     `[WORKER] '${this._name}' exited with code: ${code}`
                 );
             });
+            this._worker.on("message", this.responseHandler);
             console.log(`[WORKER] Created worker '${name}'`);
         } catch (e) {
             console.error(e);
         }
     }
+
     /**
      * Sends an event and gets a response from the worker
      *
@@ -46,23 +49,20 @@ export default class Worker {
      */
     postAndReply(event, data) {
         return new Promise((resolve) => {
-            let response = (res) => {
-                if (
-                    !res.id ||
-                    res.id !== id ||
-                    !res.event ||
-                    res.event !== event
-                )
-                    return;
-                resolve(res.data);
-                this._worker.off("message", response);
-            };
+            let respond = (data) => resolve(data);
 
             let id = uuid.v1();
             this._worker.postMessage({ event, id, data });
-            this._worker.on("message", response);
+            this._messages[id] = respond;
         });
     }
+
+    responseHandler(res) {
+        let resolve = this._messages[res.id];
+        if(!resolve) return;
+        resolve(res.data);
+    }
+    
     async stop() {
         let exitcode = await this._worker.terminate();
         console.log(`Exited worker ${this._name} with exit code ${exitcode}`);
