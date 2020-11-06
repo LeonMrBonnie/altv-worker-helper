@@ -61,6 +61,7 @@ export default class Worker {
         let resolve = this._messages[res.id];
         if(!resolve) return;
         resolve(res.data);
+        delete this._messages[res.id];
     }
     
     async stop() {
