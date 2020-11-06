@@ -1,4 +1,6 @@
 # alt:V Worker helper
+[:heart: Support me by becoming a Patron](https://www.patreon.com/leonmrbonnie/)<br>
+
 ## A small alt:V helper for worker threads
 
 ### Usage
