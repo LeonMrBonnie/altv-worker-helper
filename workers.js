@@ -31,7 +31,7 @@ export default class Worker {
                     `[WORKER] '${this._name}' exited with code: ${code}`
                 );
             });
-            this._worker.on("message", this.responseHandler);
+            this._worker.on("message", this.responseHandler.bind(this));
             console.log(`[WORKER] Created worker '${name}'`);
         } catch (e) {
             console.error(e);
