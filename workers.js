@@ -51,7 +51,7 @@ export default class Worker {
         return new Promise((resolve) => {
             let respond = (data) => resolve(data);
 
-            let id = uuid.v1();
+            let id = uuid.v4();
             this._worker.postMessage({ event, id, data });
             this._messages[id] = respond;
         });
